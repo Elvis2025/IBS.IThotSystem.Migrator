@@ -1,46 +1,82 @@
-﻿# ⚡ Excel To SQL Migrator
-
 <div align="center">
 
-## 🧩 Generador dinámico de scripts SQL Server desde Excel
+# ⚡ EXCEL TO SQL MIGRATOR
 
-Convierte datos de archivos Excel en scripts `INSERT INTO` listos para ejecutar en SQL Server, de forma rápida, visual y configurable.
+<br/>
+
+<img src="https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white" />
+<img src="https://img.shields.io/badge/Blazor-Server-8A2BE2?style=for-the-badge&logo=blazor&logoColor=white" />
+<img src="https://img.shields.io/badge/SQL-Server-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white" />
+<img src="https://img.shields.io/badge/UI-UX%20Senior-0ea5e9?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Dark-Professional-111827?style=for-the-badge" />
+
+<br/>
+<br/>
+
+## 🚀 Generador dinámico de scripts SQL Server desde Excel
+
+### 🧩 Convierte archivos Excel en scripts `INSERT INTO` listos para ejecutar.
+
+<br/>
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Inter&weight=700&size=22&duration=2500&pause=1200&color=38BDF8&center=true&vCenter=true&width=900&lines=Excel+To+SQL+Migration+Tool;Dynamic+INSERT+Generator;Professional+Dark+UI;Blazor+%2B+.NET+9+%2B+SQL+Server;Optimized+for+real+migrations" />
 
 </div>
 
 ---
 
-## 📌 ¿Por qué se creó?
+# 🌌 ¿Por qué se creó?
 
-Este proyecto fue creado para resolver una necesidad común en procesos de migración de datos:
+En muchos proyectos empresariales, migrar información desde Excel hacia SQL Server se convierte en un proceso:
 
-> Tomar información desde archivos Excel y convertirla rápidamente en scripts SQL seguros, organizados y ejecutables.
+- ❌ Lento
+- ❌ Repetitivo
+- ❌ Propenso a errores
+- ❌ Difícil de mantener
+- ❌ Manual y poco escalable
 
-Muchas veces los datos vienen desde clientes, plantillas manuales, reportes externos o archivos exportados. Crear los `INSERT` manualmente puede ser lento, repetitivo y propenso a errores.
+<br/>
 
-Por eso esta app permite cargar un Excel, mapear columnas, agregar valores manuales y generar automáticamente un archivo `.sql`.
+Por esa razón nace:
+
+# ⚡ Excel To SQL Migrator
+
+Una herramienta visual construida para:
+
+- 📄 Leer archivos Excel
+- 🧠 Mapear columnas dinámicamente
+- 🧩 Agregar valores manuales
+- ⚙️ Generar scripts SQL automáticamente
+- 🛡️ Evitar errores comunes de SQL Server
+- 🚀 Ahorrar horas de trabajo manual
 
 ---
 
-## 🎯 ¿Para qué se usa?
+# 🎯 Objetivo principal
 
-Esta aplicación se usa para:
-
-- 📄 Leer datos desde archivos Excel.
-- 🧠 Mapear columnas del Excel a campos de una tabla SQL.
-- ✍️ Agregar campos manuales que no existen en el Excel.
-- 🧱 Generar scripts `INSERT INTO`.
-- 💾 Descargar un archivo `.sql`.
-- 🛡️ Evitar el error de SQL Server por más de 1000 filas en un solo `INSERT`.
-- 🔁 Cambiar la fuente de datos sin perder la configuración de campos.
+Permitir que cualquier usuario pueda transformar un Excel en un script SQL funcional en cuestión de segundos.
 
 ---
 
-## 🚀 Funcionalidades principales
+# 🖥️ Interfaz Profesional
 
-### 📁 Carga de Excel
+<div align="center">
 
-Permite cargar archivos:
+| 🌙 Dark Mode | ⚡ UI Moderna | 🎨 UX Intuitiva |
+|---|---|---|
+| Glassmorphism | Animaciones suaves | Flujo visual claro |
+
+</div>
+
+---
+
+# 🚀 Funcionalidades
+
+---
+
+# 📁 Carga de Excel
+
+Soporta:
 
 ```text
 .xlsx
