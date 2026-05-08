@@ -1,0 +1,799 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+@using IBS.IThotSystem.Migrator.Models
+@using IBS.IThotSystem.Migrator.Services
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject ExcelReaderService ExcelReaderService
+@inject SqlGeneratorService SqlGeneratorService
+@inject IJSRuntime JS
+
+<PageTitle>Excel To SQL Migrator</PageTitle>
+
+<div class="app-shell">
+
+    <div class="hero">
+
+        <div class="hero-content">
+
+            <div class="app-badge">
+                <i class="bi bi-lightning-charge-fill"></i>
+                SQL Server Migration Tool
+            </div>
+
+            <h1>Excel To SQL Generator</h1>
+
+            <p>
+                Convierte archivos Excel en scripts INSERT seguros,
+                dinámicos y listos para ejecutar en SQL Server.
+            </p>
+
+        </div>
+
+        <div class="hero-stats">
+
+            <div class="stat-card">
+
+                <span class="stat-icon">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                </span>
+
+                <div>
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(FileName)
+                                                ? "Sin archivo"
+                                                : "Excel cargado")
+                    </strong>
+
+                    <small>
+                        @(string.IsNullOrWhiteSpace(FileName)
+                                                ? "Carga una fuente de datos"
+                                                : FileName)
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <span class="stat-icon">
+                    <i class="bi bi-bar-chart-fill"></i>
+                </span>
+
+                <div>
+                    <strong>@ExcelRows.Count</strong>
+                    <small>Registros detectados</small>
+                </div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <span class="stat-icon">
+                    <i class="bi bi-puzzle-fill"></i>
+                </span>
+
+                <div>
+                    <strong>@Fields.Count</strong>
+                    <small>Campos configurados</small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="main-grid">
+
+        <section class="panel upload-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-icon">
+                        <i class="bi bi-folder2-open"></i>
+                    </span>
+
+                    <h2>Fuente de datos</h2>
+
+                </div>
+
+                <p>
+                    Carga o cambia el Excel sin perder la configuración de campos.
+                </p>
+
+            </div>
+
+            <div class="upload-box">
+
+                <div class="upload-icon">
+                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                </div>
+
+                <div>
+
+                    <label class="upload-title">
+                        Selecciona tu archivo Excel
+                    </label>
+
+                    <small>
+                        Formatos permitidos: .xlsx, .xls, .xlsm
+                    </small>
+
+                </div>
+
+                <InputFile OnChange="LoadExcel"
+                           accept=".xlsx,.xls,.xlsm"
+                           class="file-input" />
+
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(FileName))
+            {
+                <div class="success-card">
+
+                    <span>
+                        <i class="bi bi-check-circle-fill"></i>
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Archivo cargado correctamente
+                        </strong>
+
+                        <small>
+                            @FileName | @ExcelRows.Count registros
+                        </small>
+
+                    </div>
+
+                </div>
+            }
+
+            <div class="form-group">
+
+                <label class="label">
+                    Tabla destino
+                </label>
+
+                <div class="input-shell">
+
+                    <span>
+                        <i class="bi bi-database-fill"></i>
+                    </span>
+
+                    <input class="input"
+                           @bind="TableName"
+                           placeholder="Ejemplo: Persons" />
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="panel config-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-icon">
+                        <i class="bi bi-plus-circle-fill"></i>
+                    </span>
+
+                    <h2>Agregar campo</h2>
+
+                </div>
+
+                <p>
+                    Mapea columnas del Excel o agrega valores manuales por defecto.
+                </p>
+
+            </div>
+
+            @if (!ExcelColumns.Any())
+            {
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        <i class="bi bi-inbox-fill"></i>
+                    </div>
+
+                    <strong>
+                        Primero carga un archivo Excel
+                    </strong>
+
+                    <small>
+                        Luego podrás configurar los campos del INSERT.
+                    </small>
+
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+
+                    <label class="label">
+                        Campo SQL
+                    </label>
+
+                    <div class="input-shell">
+
+                        <span>
+                            <i class="bi bi-tag-fill"></i>
+                        </span>
+
+                        <input class="input"
+                               @bind="NewField.SqlFieldName"
+                               placeholder="Ejemplo: FirstName, TenantId, CreationTime" />
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Origen del valor
+                    </label>
+
+                    <div class="radio-group">
+
+                        <label class="radio-card @(NewField.UseExcelColumn ? "selected" : "")">
+
+                            <input type="radio"
+                                   name="valueOrigin"
+                                   checked="@NewField.UseExcelColumn"
+                                   @onchange="SetExcelOrigin" />
+
+                            <span class="radio-icon">
+                                <i class="bi bi-table"></i>
+                            </span>
+
+                            <span>
+                                <strong>Desde Excel</strong>
+                                <small>Usar columna del archivo</small>
+                            </span>
+
+                        </label>
+
+                        <label class="radio-card @(!NewField.UseExcelColumn ? "selected" : "")">
+
+                            <input type="radio"
+                                   name="valueOrigin"
+                                   checked="@(!NewField.UseExcelColumn)"
+                                   @onchange="SetManualOrigin" />
+
+                            <span class="radio-icon">
+                                <i class="bi bi-pencil-square"></i>
+                            </span>
+
+                            <span>
+                                <strong>Manual</strong>
+                                <small>Valor fijo</small>
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+                @if (NewField.UseExcelColumn)
+                {
+                    <div class="form-group">
+
+                        <label class="label">
+                            Columna Excel
+                        </label>
+
+                        <div class="input-shell">
+
+                            <span>
+                                <i class="bi bi-pin-angle-fill"></i>
+                            </span>
+
+                            <select class="input"
+                                    @bind="NewField.ExcelColumnName">
+
+                                <option value="">
+                                    Seleccione columna
+                                </option>
+
+                                @foreach (var column in ExcelColumns)
+                                {
+                                    <option value="@column">
+                                        @column
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+
+                        <label class="label">
+                            Valor fijo
+                        </label>
+
+                        <div class="input-shell">
+
+                            <span>
+                                <i class="bi bi-input-cursor-text"></i>
+                            </span>
+
+                            <input class="input"
+                                   @bind="NewField.DefaultValue"
+                                   placeholder="Ejemplo: 1, Elvis, true, 2026-05-08" />
+
+                        </div>
+
+                    </div>
+                }
+
+                <div class="form-group">
+
+                    <label class="label">
+                        Tipo de dato
+                    </label>
+
+                    <div class="input-shell">
+
+                        <span>
+                            <i class="bi bi-braces"></i>
+                        </span>
+
+                        <select class="input"
+                                @bind="NewField.DataType">
+
+                            <option value="string">Texto</option>
+                            <option value="int">Entero</option>
+                            <option value="long">Bigint</option>
+                            <option value="decimal">Decimal</option>
+                            <option value="date">Fecha</option>
+                            <option value="bool">Booleano</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="checks">
+
+                    <label class="check-card @(NewField.IsRequired ? "selected" : "")">
+
+                        <input type="checkbox"
+                               @bind="NewField.IsRequired" />
+
+                        <span>
+                            <i class="bi bi-lock-fill"></i>
+                        </span>
+
+                        Requerido
+
+                    </label>
+
+                    <label class="check-card @(NewField.AllowNull ? "selected" : "")">
+
+                        <input type="checkbox"
+                               @bind="NewField.AllowNull" />
+
+                        <span>
+                            <i class="bi bi-circle"></i>
+                        </span>
+
+                        Permite NULL
+
+                    </label>
+
+                </div>
+
+                @if (NewField.UseExcelColumn)
+                {
+                    <div class="form-group">
+
+                        <label class="label">
+                            Valor por defecto si viene vacío
+                        </label>
+
+                        <div class="input-shell">
+
+                            <span>
+                                <i class="bi bi-life-preserver"></i>
+                            </span>
+
+                            <input class="input"
+                                   @bind="NewField.DefaultValue"
+                                   placeholder="Ejemplo: N/A, 0, 2026-05-08, true" />
+
+                        </div>
+
+                    </div>
+                }
+
+                <button class="btn primary wide"
+                        @onclick="AddField">
+
+                    <i class="bi bi-plus-lg"></i>
+                    Agregar campo
+
+                </button>
+            }
+
+        </section>
+
+    </div>
+
+    <section class="panel fields-card">
+
+        <div class="panel-header horizontal">
+
+            <div>
+
+                <span class="section-icon">
+                    <i class="bi bi-card-checklist"></i>
+                </span>
+
+                <h2>Campos agregados</h2>
+
+            </div>
+
+            <div class="actions">
+
+                <button class="btn primary"
+                        @onclick="GenerateSql"
+                        disabled="@(!Fields.Any())">
+
+                    <i class="bi bi-gear-fill"></i>
+                    Generar SQL
+
+                </button>
+
+                <button class="btn secondary"
+                        @onclick="DownloadSql"
+                        disabled="@string.IsNullOrWhiteSpace(GeneratedSql)">
+
+                    <i class="bi bi-download"></i>
+                    Descargar .sql
+
+                </button>
+
+            </div>
+
+        </div>
+
+        @if (!Fields.Any())
+        {
+            <div class="empty-state compact">
+
+                <div class="empty-icon">
+                    <i class="bi bi-puzzle-fill"></i>
+                </div>
+
+                <strong>
+                    No has agregado campos
+                </strong>
+
+                <small>
+                    Configura los campos que quieres insertar en SQL Server.
+                </small>
+
+            </div>
+        }
+        else
+        {
+            <div class="fields-table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Campo SQL</th>
+                            <th>Origen</th>
+                            <th>Excel / Valor</th>
+                            <th>Tipo</th>
+                            <th>Req.</th>
+                            <th>NULL</th>
+                            <th></th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var field in Fields)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="sql-field">
+                                        @field.SqlFieldName
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    <span class="badge @(field.UseExcelColumn ? "excel" : "manual")">
+
+                                        @(field.UseExcelColumn ? "Excel" : "Manual")
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    @if (field.UseExcelColumn)
+                                    {
+                                        <span class="muted-value">
+                                            @field.ExcelColumnName
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <input class="table-input"
+                                               @bind="field.DefaultValue"
+                                               placeholder="Valor manual" />
+                                    }
+
+                                </td>
+
+                                <td>
+                                    <span class="type-pill">
+                                        @field.DataType
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @(field.IsRequired ? "Sí" : "No")
+                                </td>
+
+                                <td>
+                                    @(field.AllowNull ? "Sí" : "No")
+                                </td>
+
+                                <td>
+
+                                    <button class="icon-btn danger"
+                                            @onclick="() => RemoveField(field)"
+                                            title="Eliminar campo">
+
+                                        <i class="bi bi-trash3-fill"></i>
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </section>
+
+    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+    {
+        <div class="toast-error">
+
+            <span>
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </span>
+
+            <strong>@ErrorMessage</strong>
+
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(GeneratedSql))
+    {
+        <section class="panel sql-panel">
+
+            <div class="panel-header horizontal">
+
+                <div>
+
+                    <span class="section-icon">
+                        <i class="bi bi-code-square"></i>
+                    </span>
+
+                    <h2>SQL generado</h2>
+
+                </div>
+
+                <span class="safe-badge">
+                    Bloques de máximo 1000 filas
+                </span>
+
+            </div>
+
+            <textarea class="sql-preview"
+                  readonly>@GeneratedSql</textarea>
+
+        </section>
+    }
+
+</div>
+
+<script>
+    window.downloadFile = function (fileName, content) {
+
+        const blob = new Blob(
+            [content],
+            { type: 'text/sql;charset=utf-8;' });
+
+        const link = document.createElement('a');
+
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+    };
+</script>
+
+@code {
+    private string TableName { get; set; } = "";
+    private string FileName { get; set; } = "";
+    private string ErrorMessage { get; set; } = "";
+    private string GeneratedSql { get; set; } = "";
+
+    private List<string> ExcelColumns { get; set; } = new();
+    private List<Dictionary<string, string?>> ExcelRows { get; set; } = new();
+    private List<ExcelFieldMap> Fields { get; set; } = new();
+
+    private ExcelFieldMap NewField { get; set; } = new()
+    {
+        UseExcelColumn = true,
+        IsRequired = false,
+        AllowNull = false
+    };
+
+    private bool LastUseExcelColumn { get; set; } = true;
+    private bool LastIsRequired { get; set; } = false;
+    private bool LastAllowNull { get; set; } = false;
+    private string LastDataType { get; set; } = "string";
+
+    private void SetExcelOrigin()
+    {
+        NewField.UseExcelColumn = true;
+    }
+
+    private void SetManualOrigin()
+    {
+        NewField.UseExcelColumn = false;
+        NewField.ExcelColumnName = string.Empty;
+    }
+
+    private async Task LoadExcel(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            ErrorMessage = "";
+            GeneratedSql = "";
+
+            var file = e.File;
+            FileName = file.Name;
+
+            await using var stream = file.OpenReadStream(maxAllowedSize: 20 * 1024 * 1024);
+
+            var result = await ExcelReaderService.ReadExcelAsync(stream);
+
+            ExcelColumns = result.Columns;
+            ExcelRows = result.Rows;
+
+            if (!ExcelColumns.Any())
+                ErrorMessage = "No se encontraron columnas en el Excel.";
+
+            SyncExistingFieldsWithNewExcelColumns();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+
+    private void SyncExistingFieldsWithNewExcelColumns()
+    {
+        foreach (var field in Fields.Where(x => x.UseExcelColumn))
+        {
+            if (!ExcelColumns.Contains(field.ExcelColumnName))
+            {
+                field.ExcelColumnName = string.Empty;
+            }
+        }
+    }
+
+    private void AddField()
+    {
+        ErrorMessage = "";
+
+        if (string.IsNullOrWhiteSpace(NewField.SqlFieldName))
+        {
+            ErrorMessage = "Debe indicar el nombre del campo SQL.";
+            return;
+        }
+
+        if (NewField.UseExcelColumn && string.IsNullOrWhiteSpace(NewField.ExcelColumnName))
+        {
+            ErrorMessage = "Debe seleccionar una columna del Excel o cambiar el origen a Manual / Valor fijo.";
+            return;
+        }
+
+        if (!NewField.UseExcelColumn && string.IsNullOrWhiteSpace(NewField.DefaultValue) && !NewField.AllowNull)
+        {
+            ErrorMessage = "Si el campo manual no permite NULL, debes indicar un valor fijo.";
+            return;
+        }
+
+        Fields.Add(new ExcelFieldMap
+        {
+            SqlFieldName = NewField.SqlFieldName.Trim(),
+            ExcelColumnName = NewField.UseExcelColumn ? NewField.ExcelColumnName.Trim() : string.Empty,
+            DataType = NewField.DataType,
+            IsRequired = NewField.IsRequired,
+            AllowNull = NewField.AllowNull,
+            DefaultValue = NewField.DefaultValue,
+            UseExcelColumn = NewField.UseExcelColumn
+        });
+
+        LastUseExcelColumn = NewField.UseExcelColumn;
+        LastIsRequired = NewField.IsRequired;
+        LastAllowNull = NewField.AllowNull;
+        LastDataType = NewField.DataType;
+
+        NewField = new ExcelFieldMap
+        {
+            UseExcelColumn = LastUseExcelColumn,
+            IsRequired = LastIsRequired,
+            AllowNull = LastAllowNull,
+            DataType = LastDataType
+        };
+    }
+
+    private void RemoveField(ExcelFieldMap field)
+    {
+        Fields.Remove(field);
+    }
+
+    private void GenerateSql()
+    {
+        try
+        {
+            ErrorMessage = "";
+
+            if (Fields.Any(x => x.UseExcelColumn && string.IsNullOrWhiteSpace(x.ExcelColumnName)))
+            {
+                ErrorMessage = "Hay campos configurados desde Excel que no tienen columna asignada. Revisa los campos agregados.";
+                return;
+            }
+
+            GeneratedSql = SqlGeneratorService.GenerateInsertSql(TableName, Fields, ExcelRows);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+
+    private async Task DownloadSql()
+    {
+        await JS.InvokeVoidAsync("downloadFile", "migration.sql", GeneratedSql);
+    }
+}
