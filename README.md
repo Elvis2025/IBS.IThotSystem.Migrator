@@ -1,365 +1,203 @@
-# ⚡ Excel To SQL Migrator
+Perfecto. Entonces mantenemos **toda la información igual**, pero le damos más vida visual al `README.md` agregando:
 
-<div align="center">
-
-# 🚀 Fast • Dynamic • Professional
-
-Aplicación profesional para migrar datos desde Excel hacia SQL Server de forma visual, rápida y totalmente configurable.
-
-<br/>
-
-<img src="https://img.shields.io/badge/.NET-9-blue?style=for-the-badge" />
-<img src="https://img.shields.io/badge/BLAZOR-SERVER-purple?style=for-the-badge" />
-<img src="https://img.shields.io/badge/SQL-SERVER-red?style=for-the-badge" />
-<img src="https://img.shields.io/badge/EXCEL-SUPPORTED-16a34a?style=for-the-badge" />
-<img src="https://img.shields.io/badge/STATUS-STABLE-success?style=for-the-badge" />
-
-<br/>
-<br/>
-
-💎 Diseñado para desarrolladores, analistas y migraciones empresariales.
-
-</div>
-
----
-
-# 📌 Descripción
-
-**Excel To SQL Migrator** permite generar automáticamente scripts SQL `INSERT` a partir de archivos Excel de manera inteligente y configurable.
-
-La aplicación detecta automáticamente:
-
-- 📊 Cantidad de registros
-- 📌 Columnas disponibles
-- 📄 Nombre del archivo
-- 🧩 Mapeo dinámico de columnas
-
----
-
-# 🧠 Mapeo dinámico de columnas
-
-Puedes mapear cualquier columna del Excel hacia cualquier campo SQL.
-
-## 📄 Ejemplo de mapeo
-
-| Excel | SQL |
-|---|---|
-| Nombre | FirstName |
-| Edad | Age |
-
-## ⚡ Resultado generado
-
-```sql
-INSERT INTO Persons
-(
-    FirstName,
-    Age
-)
-VALUES
-(
-    N'Elvis',
-    20
-);
-```
-
----
-
-# ✍️ Valores manuales
-
-También puedes insertar valores fijos que NO existen en el Excel.
-
-## 📄 Ejemplo
-
-| Campo SQL | Valor |
-|---|---|
-| TenantId | 1 |
-| IsActive | true |
-
-## ⚡ Resultado generado
-
-```sql
-INSERT INTO Persons
-(
-    TenantId,
-    IsActive
-)
-VALUES
-(
-    1,
-    1
-);
-```
-
----
-
-# 🛡️ Protección contra límites de SQL Server
-
-SQL Server NO permite más de:
-
-```text
-1000 filas por INSERT
-```
-
-La aplicación divide automáticamente el script en bloques seguros.
-
-## ⚡ Generación automática segura
-
-```sql
-INSERT INTO Table (...)
-VALUES (...);
-
-INSERT INTO Table (...)
-VALUES (...);
-
-INSERT INTO Table (...)
-VALUES (...);
-```
-
-## 🚫 Error evitado automáticamente
-
-```text
-The number of row value expressions in the INSERT statement exceeds the maximum allowed number of 1000 row values.
-```
-
----
-
-# ⚙️ Configuración inteligente
-
-Cada campo puede configurarse dinámicamente.
-
-| Configuración | Soportado |
-|---|---|
-| Campo requerido | ✅ |
-| Permitir NULL | ✅ |
-| Valor por defecto | ✅ |
-| Valor manual | ✅ |
-| Desde Excel | ✅ |
-| Tipo de dato | ✅ |
-
----
-
-# 🧬 Tipos de datos soportados
-
-| Tipo |
-|---|
-| string |
-| int |
-| long |
-| decimal |
-| date |
-| bool |
-
----
-
-# 🎨 Diseño UI/UX Senior
-
-La interfaz fue diseñada con enfoque moderno y empresarial.
-
-## 💎 Características visuales
-
-- 🌙 Dark Professional
-- ⚡ Alto contraste
-- 🧠 Flujo intuitivo
-- 💎 Glassmorphism
 - ✨ Animaciones suaves
-- 📊 Jerarquía visual clara
-- 🧩 Componentes reutilizables
-- 🎯 UX enfocada en productividad
+- 💎 Efecto glassmorphism
+- ⚡ Badges con estilo
+- 🎯 Separadores más modernos
+- 🌙 Enfoque dark professional
+- 🚀 Bloques visuales más atractivos
 
----
+Para lograr animaciones reales en Markdown puro, lo más recomendable es usar HTML embebido con CSS dentro del README:
 
-# 🚀 Tecnologías utilizadas
+```html
+<style>
+  .hero {
+    text-align: center;
+    padding: 32px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0f172a, #1e293b, #111827);
+    color: white;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    animation: fadeInDown 0.9s ease both;
+  }
 
-<div align="center">
+  .hero h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+    animation: glowPulse 2.5s ease-in-out infinite;
+  }
 
-| Tecnología | Uso |
-|---|---|
-| .NET 9 | Backend |
-| Blazor Server | UI |
-| ClosedXML | Lectura Excel |
-| SQL Server | Base de datos |
-| Bootstrap Icons | Iconografía |
-| CSS3 | Diseño UI/UX |
+  .hero p {
+    font-size: 18px;
+    opacity: 0.9;
+  }
 
-</div>
+  .glass-card {
+    padding: 22px;
+    margin: 22px 0;
+    border-radius: 18px;
+    background: rgba(15, 23, 42, 0.78);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
+    animation: fadeInUp 0.8s ease both;
+  }
 
----
+  .glow-line {
+    height: 3px;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2563eb, #9333ea, #16a34a);
+    animation: gradientMove 3s linear infinite;
+    background-size: 300% 300%;
+  }
 
-# 📦 Instalación
+  .badge-row img {
+    margin: 4px;
+    transition: transform 0.25s ease;
+  }
 
-## 1️⃣ Restaurar paquetes
+  .badge-row img:hover {
+    transform: translateY(-3px) scale(1.04);
+  }
 
-```bash
-dotnet restore
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .feature-item {
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    transition: all 0.25s ease;
+  }
+
+  .feature-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% {
+      text-shadow: 0 0 12px rgba(59, 130, 246, 0.65);
+    }
+
+    50% {
+      text-shadow: 0 0 26px rgba(147, 51, 234, 0.95);
+    }
+  }
+
+  @keyframes gradientMove {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+</style>
 ```
 
-## 2️⃣ Compilar proyecto
+Luego puedes usar bloques así:
 
-```bash
-dotnet build
-```
-
-## 3️⃣ Ejecutar aplicación
-
-```bash
-dotnet run
-```
-
----
-
-# 🌍 Abrir aplicación
-
-```text
-https://localhost:7100
-```
-
----
-
-# 🧪 Ejemplo práctico
-
-# 📄 Excel
-
-| Nombre | Apellido | Edad |
-|---|---|---|
-| Elvis | Hernandez | 20 |
-| Jose | Perez | 25 |
-
----
-
-# ⚙️ Configuración
-
-| Campo SQL | Origen |
-|---|---|
-| FirstName | Nombre |
-| LastName | Apellido |
-| Age | Edad |
-| TenantId | Manual → 1 |
-| IsActive | Manual → true |
-
----
-
-# ⚡ Resultado generado
-
-```sql
-INSERT INTO Persons
-(
-    FirstName,
-    LastName,
-    Age,
-    TenantId,
-    IsActive
-)
-VALUES
-(
-    N'Elvis',
-    N'Hernandez',
-    20,
-    1,
-    1
-),
-(
-    N'Jose',
-    N'Perez',
-    25,
-    1,
-    1
-);
-```
-
----
-
-# 🛡️ Ventajas
-
-<div align="center">
-
-| ⚡ Rápido | 🧠 Flexible | 🛡️ Seguro |
-|---|---|---|
-| Generación automática | Valores manuales | Escape SQL |
-
-| 🔁 Reutilizable | 📊 Escalable | 🎯 Profesional |
-|---|---|---|
-| Cambia el Excel fácilmente | Miles de registros | UI moderna |
-
-</div>
-
----
-
-# 📂 Arquitectura del proyecto
-
-```text
-IBS.IThotSystem.Migrator
-│
-├── Components
-│   └── Pages
-│       └── ExcelMigration.razor
-│
-├── Models
-│   └── ExcelFieldMap.cs
-│
-├── Services
-│   ├── ExcelReaderService.cs
-│   └── SqlGeneratorService.cs
-│
-├── wwwroot
-│   └── app.css
-│
-├── Program.cs
-│
-└── README.md
-```
-
----
-
-# 🔮 Mejoras futuras
-
-- 💾 Guardar plantillas
-- 🔄 Generar UPDATE
-- 🔀 Generar MERGE
-- 📊 Preview del Excel
-- 🧪 Validaciones visuales
-- 🌐 Multi idioma
-- 🗄️ Conexión directa SQL Server
-- 📈 Dashboard de migraciones
-- ☁️ Exportación cloud
-
----
-
-# 💡 Casos de uso
-
-## ✅ Ideal para:
-
-- Migración de clientes
-- Carga masiva de productos
-- Importación de empleados
-- Migración entre sistemas
-- Configuración inicial de catálogos
-- Seed de datos
-- Integraciones empresariales
-
----
-
-# 🧠 Filosofía del proyecto
-
-> Automatizar procesos repetitivos y convertir tareas técnicas complejas en experiencias visuales simples, rápidas y profesionales.
-
----
-
-<div align="center">
+```html
+<div class="hero">
 
 # ⚡ Excel To SQL Migrator
 
 ## 🚀 Fast • Dynamic • Professional
 
-<br/>
-
-<img src="https://img.shields.io/badge/STATUS-STABLE-success?style=for-the-badge" />
-<img src="https://img.shields.io/badge/SQL-SERVER-blue?style=for-the-badge" />
-<img src="https://img.shields.io/badge/EXCEL-SUPPORTED-16a34a?style=for-the-badge" />
-
-<br/>
-<br/>
-
-👨‍💻 Realizado por Elvis Jesus Hernandez  
-📅 Viernes 2026-05-08
+Aplicación profesional para migrar datos desde Excel hacia SQL Server de forma visual, rápida y totalmente configurable.
 
 </div>
+```
+
+Y para ventajas visuales:
+
+```html
+<div class="glass-card">
+
+## 🛡️ Ventajas
+
+<div class="feature-grid">
+
+<div class="feature-item">
+
+### ⚡ Rápido  
+Generación automática de scripts SQL.
+
+</div>
+
+<div class="feature-item">
+
+### 🧠 Flexible  
+Mapeo dinámico y valores manuales.
+
+</div>
+
+<div class="feature-item">
+
+### 🛡️ Seguro  
+Escape SQL y división por bloques.
+
+</div>
+
+</div>
+
+</div>
+```
+
+Te recomiendo que el `README.md` quede con esta estructura:
+
+```text
+README.md
+│
+├── Hero animado
+├── Badges
+├── Descripción
+├── Características principales
+├── Mapeo dinámico
+├── Valores manuales
+├── Protección SQL Server
+├── Configuración inteligente
+├── Tipos de datos
+├── Diseño UI/UX
+├── Tecnologías
+├── Instalación
+├── Ejemplo práctico
+├── Ventajas
+├── Arquitectura
+├── Mejoras futuras
+├── Casos de uso
+└── Footer profesional
+```
+
+Ojo: algunas plataformas como GitHub bloquean ciertos estilos CSS dentro del README. Si es para mostrarlo dentro de tu app, documentación interna, GitLab, Notion, web o landing page, se verá mucho mejor.
